@@ -1,5 +1,11 @@
 <!DOCTYPE html><html lang="sa">
 <head>
+  <link rel="manifest" href="manifest.json">
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js");
+  }
+</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>संस्कृत शिक्षण</title>
