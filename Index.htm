@@ -1,0 +1,166 @@
+<!DOCTYPE html><html lang="sa">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>संस्कृत शिक्षण</title>
+  <link rel="manifest" href="manifest.json">
+  <style>
+    body {
+      font-family: "Noto Sans Devanagari", sans-serif;
+      text-align: center;
+      padding: 20px;
+      background: #f0f2f5;
+      margin: 0;
+    }
+    header {
+      background: linear-gradient(90deg, #3b5998, #5b79c8);
+      color: white;
+      padding: 15px;
+      border-radius: 0 0 20px 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    .card {
+      background: #fff;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.1);
+      max-width: 600px;
+      transition: transform 0.2s;
+    }
+    .card:hover { transform: scale(1.02); }
+    select, button {
+      padding: 12px;
+      margin: 10px;
+      border-radius: 10px;
+      border: 1px solid #aaa;
+      font-size: 1em;
+    }
+    button {
+      background: #3b5998;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #5b79c8;
+    }
+    h1 { margin: 0; }
+    h2 { color: #3b5998; }
+    .output { margin-top: 20px; font-size: 1.1em; text-align: left; }
+    .output b { color: #444; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📖 संस्कृत शिक्षण App</h1>
+    <p>शब्दरूप, धातुरूप, अनुवाद एवं शब्दकोश</p>
+  </header>  <div class="card">
+    <h2>🔤 शब्दरूप (Noun Forms)</h2>
+    <select id="nounSelect">
+      <option value="राम">राम</option>
+      <option value="गज">गज</option>
+      <option value="सीता">सीता</option>
+    </select>
+    <button onclick="showNounForms()">दर्शयतु</button>
+    <div id="nounOutput" class="output"></div>
+  </div>  <div class="card">
+    <h2>📝 धातुरूप (Verb Forms - लट्)</h2>
+    <select id="verbSelect">
+      <option value="गम्">गम् (to go)</option>
+      <option value="पठ्">पठ् (to read)</option>
+      <option value="लिख्">लिख् (to write)</option>
+    </select>
+    <button onclick="showVerbForms()">दर्शयतु</button>
+    <div id="verbOutput" class="output"></div>
+  </div>  <script>
+    // Refined Sanskrit Database (expanded & corrected)
+    const database = {
+      shabdaRupa: {
+        "राम": {
+          gender: "m",
+          forms: {
+            singular: { prathama: "रामः", dvitiya: "रामम्", tritiya: "रामेण", caturthi: "रामाय", panchami: "रामात्", sasthi: "रामस्य", saptami: "रामे", sambodhana: "हे राम" },
+            dual: { prathama: "रामौ", dvitiya: "रामौ", tritiya: "रामाभ्याम्", caturthi: "रामाभ्याम्", panchami: "रामाभ्याम्", sasthi: "रामयोः", saptami: "रामयोः", sambodhana: "हे रामौ" },
+            plural: { prathama: "रामाः", dvitiya: "रामान्", tritiya: "रामैः", caturthi: "रामेभ्यः", panchami: "रामेभ्यः", sasthi: "रामाणाम्", saptami: "रामेषु", sambodhana: "हे रामाः" }
+          }
+        },
+        "गज": {
+          gender: "m",
+          forms: {
+            singular: { prathama: "गजः", dvitiya: "गजम्", tritiya: "गजेन", caturthi: "गजाय", panchami: "गजात्", sasthi: "गजस्य", saptami: "गजे", sambodhana: "हे गज" },
+            dual: { prathama: "गजौ", dvitiya: "गजौ", tritiya: "गजाभ्याम्", caturthi: "गजाभ्याम्", panchami: "गजाभ्याम्", sasthi: "गजयोः", saptami: "गजयोः", sambodhana: "हे गजौ" },
+            plural: { prathama: "गजाः", dvitiya: "गजान्", tritiya: "गजैः", caturthi: "गजेभ्यः", panchami: "गजेभ्यः", sasthi: "गजानाम्", saptami: "गजेषु", sambodhana: "हे गजाः" }
+          }
+        },
+        "सीता": {
+          gender: "f",
+          forms: {
+            singular: { prathama: "सीता", dvitiya: "सीताम्", tritiya: "सीतया", caturthi: "सीतायै", panchami: "सीतायाः", sasthi: "सीतायाः", saptami: "सीतायाम्", sambodhana: "हे सीते" },
+            dual: { prathama: "सीते", dvitiya: "सीते", tritiya: "सीताभ्याम्", caturthi: "सीताभ्याम्", panchami: "सीताभ्याम्", sasthi: "सीतयोः", saptami: "सीतयोः", sambodhana: "हे सीते" },
+            plural: { prathama: "सीताः", dvitiya: "सीताः", tritiya: "सीताभिः", caturthi: "सीताभ्यः", panchami: "सीताभ्यः", sasthi: "सीतानाम्", saptami: "सीतासु", sambodhana: "हे सीताः" }
+          }
+        }
+      },
+      dhatuRupa: {
+        "गम्": {
+          meaning: "to go",
+          lakar: {
+            lat: {
+              singular: { uttama: "गच्छामि", madhyama: "गच्छसि", prathama: "गच्छति" },
+              dual: { uttama: "गच्छावः", madhyama: "गच्छथः", prathama: "गच्छतः" },
+              plural: { uttama: "गच्छामः", madhyama: "गच्छथ", prathama: "गच्छन्ति" }
+            }
+          }
+        },
+        "पठ्": {
+          meaning: "to read",
+          lakar: {
+            lat: {
+              singular: { uttama: "पठामि", madhyama: "पठसि", prathama: "पठति" },
+              dual: { uttama: "पठावः", madhyama: "पठथः", prathama: "पठतः" },
+              plural: { uttama: "पठामः", madhyama: "पठथ", prathama: "पठन्ति" }
+            }
+          }
+        },
+        "लिख्": {
+          meaning: "to write",
+          lakar: {
+            lat: {
+              singular: { uttama: "लिखामि", madhyama: "लिखसि", prathama: "लिखति" },
+              dual: { uttama: "लिखावः", madhyama: "लिखथः", prathama: "लिखतः" },
+              plural: { uttama: "लिखामः", madhyama: "लिखथ", prathama: "लिखन्ति" }
+            }
+          }
+        }
+      }
+    };
+
+    function showNounForms() {
+      const noun = document.getElementById('nounSelect').value;
+      const forms = database.shabdaRupa[noun].forms;
+      let html = "<table border='1' style='width:100%; border-collapse:collapse;'><tr><th>विभक्ति</th><th>एकवचन</th><th>द्विवचन</th><th>बहुवचन</th></tr>";
+      const vibhaktis = ["prathama","dvitiya","tritiya","caturthi","panchami","sasthi","saptami","sambodhana"];
+      const names = ["प्रथमा","द्वितीया","तृतीया","चतुर्थी","पञ्चमी","षष्ठी","सप्तमी","सम्बोधन"];
+      for (let i=0;i<vibhaktis.length;i++) {
+        let v = vibhaktis[i];
+        html += `<tr><td><b>${names[i]}</b></td><td>${forms.singular[v]||"-"}</td><td>${forms.dual[v]||"-"}</td><td>${forms.plural[v]||"-"}</td></tr>`;
+      }
+      html += "</table>";
+      document.getElementById('nounOutput').innerHTML = html;
+    }
+
+    function showVerbForms() {
+      const verb = document.getElementById('verbSelect').value;
+      const forms = database.dhatuRupa[verb].lakar.lat;
+      let html = "<table border='1' style='width:100%; border-collapse:collapse;'><tr><th>पुरुष</th><th>एकवचन</th><th>द्विवचन</th><th>बहुवचन</th></tr>";
+      const purush = ["uttama","madhyama","prathama"];
+      const names = ["उत्तमः","मध्यमः","प्रथमः"];
+      for (let i=0;i<purush.length;i++) {
+        let p = purush[i];
+        html += `<tr><td><b>${names[i]}</b></td><td>${forms.singular[p]||"-"}</td><td>${forms.dual[p]||"-"}</td><td>${forms.plural[p]||"-"}</td></tr>`;
+      }
+      html += "</table>";
+      document.getElementById('verbOutput').innerHTML = html;
+    }
+  </script></body>
+</html>
