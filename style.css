@@ -1,22 +1,157 @@
-:root{--bg:#f3f6fb;--card:#ffffff;--accent:#2563eb;--muted:#6b7280}
-*{box-sizing:border-box}
-body{font-family:"Noto Sans Devanagari", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; margin:0;background:var(--bg);color:#0f172a}
-.app-header{background:linear-gradient(90deg,#2563eb,#3b82f6);color:white;padding:14px 18px;display:flex;justify-content:space-between;align-items:center}
-.brand{display:flex;gap:12px;align-items:center}
-.logo{width:56px;height:56px;border-radius:10px;background:white;color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:28px}
-.app-header h1{margin:0;font-size:18px}
-.tag{font-size:12px;opacity:.95}
-.install-hint{font-size:13px;background:rgba(255,255,255,0.08);padding:6px 10px;border-radius:8px;display:none;cursor:pointer}
-.container{max-width:980px;margin:18px auto;padding:0 12px}
-.card{background:var(--card);border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 8px 24px rgba(15,23,42,0.06)}
-.row{display:flex;gap:8px}
-.row input{flex:1;padding:10px;border-radius:10px;border:1px solid #e6eefc;font-size:15px}
-.row button{background:var(--accent);color:white;border:none;padding:10px 14px;border-radius:10px;cursor:pointer}
-.small-controls{margin-top:10px;display:flex;gap:8px;align-items:center}
-.small-controls select{padding:8px;border-radius:8px;border:1px solid #e6eefc}
-.results{margin-top:12px}
-.panel h2{margin:6px 0 10px 0;color:var(--accent)}
-.footer{text-align:center;padding:14px;color:var(--muted);font-size:13px}
-table{width:100%;border-collapse:collapse;margin-top:8px}
-th,td{border:1px solid #eef6ff;padding:8px;text-align:left}
-@media(max-width:700px){.row{flex-direction:column}.install-hint{display:none}}
+/* ===========================
+   Sanskrit PWA — style.css
+   =========================== */
+
+body {
+  font-family: "Noto Sans Devanagari", "Noto Sans", sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f9fafb;
+  color: #111827;
+}
+
+/* Header */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #2563eb;
+  color: white;
+  padding: 1rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logo {
+  background: white;
+  color: #2563eb;
+  font-weight: bold;
+  font-size: 1.5rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.app-header .tag {
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+.install-hint {
+  display: none;
+  font-size: 0.8rem;
+  background: rgba(255,255,255,0.2);
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Main container */
+.container {
+  max-width: 800px;
+  margin: auto;
+  padding: 1rem;
+}
+
+/* Card */
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+}
+
+.card h2, .card h3 {
+  margin-top: 0;
+  color: #1e3a8a;
+}
+
+/* Search */
+.search-card input {
+  flex: 1;
+  padding: 0.6rem;
+  font-size: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+}
+
+.search-card .row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.search-card button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.search-card button:hover {
+  background: #1e40af;
+}
+
+.small-controls select,
+.small-controls button {
+  padding: 0.4rem 0.6rem;
+  font-size: 0.9rem;
+}
+
+/* Results */
+.results {
+  margin-top: 1rem;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+}
+
+table th {
+  background: #2563eb;
+  color: white;
+  padding: 0.6rem;
+  text-align: center;
+}
+
+table td {
+  border: 1px solid #d1d5db;
+  padding: 0.6rem;
+  text-align: center;
+}
+
+table tr:nth-child(even) {
+  background: #f3f4f6;
+}
+
+/* About section */
+.about ul {
+  padding-left: 1.2rem;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 1rem;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
