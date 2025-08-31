@@ -1,7 +1,11 @@
 /* app.js (corrected) */
 const DB_FILE = 'sanskrit_database_full.json'; // keep this file in repo root
 let DB = null;
-
+async function loadDatabase() {
+    const response = await fetch("sanskrit_database_full.json");
+    const data = await response.json();
+    return data;
+}
 const queryEl = document.getElementById('query');
 const searchBtn = document.getElementById('searchBtn');
 const resultsEl = document.getElementById('results');
