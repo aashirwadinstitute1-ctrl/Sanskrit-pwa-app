@@ -1,5 +1,6 @@
 let db = {};
 let currentTool = "dict";
+alert("JS working ✅");
 
 // JSON database लोड करना
 fetch("sanskrit_database_full.json")
