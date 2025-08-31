@@ -9,7 +9,7 @@ fetch("sanskrit_database_full.json")
     console.log("DB loaded", db);
   });
 
-// UI Controls
+// Tool select
 document.getElementById("toolSelect").addEventListener("change", e => {
   currentTool = e.target.value;
 });
@@ -26,42 +26,36 @@ document.getElementById("searchBtn").addEventListener("click", () => {
   searchQuery(q);
 });
 
-// सभी panels hide करने का function
 function hideAllPanels() {
   document.querySelectorAll(".panel").forEach(p => (p.style.display = "none"));
 }
 
 function searchQuery(q) {
   hideAllPanels();
-
   if (currentTool === "dict") {
     showDict(q);
   } else if (currentTool === "decl") {
     showDecl(q);
   } else if (currentTool === "conj") {
     showConj(q);
-  } else if (currentTool === "translate") {
-    showTranslate(q);
   }
 }
 
 // ---------------- Dictionary ----------------
 function showDict(q) {
-  const data = db.dict[q];
+  const data = db.dictionary[q];
   document.getElementById("panelDict").style.display = "block";
 
   if (!data) {
     document.getElementById("dictContent").innerHTML = "❌ शब्द नहीं मिला";
     return;
   }
-
-  document.getElementById("dictContent").innerHTML =
-    `<h3>${q}</h3><p>${data}</p>`;
+  document.getElementById("dictContent").innerHTML = `<h3>${q}</h3><p>${data}</p>`;
 }
 
-// ---------------- Declensions ----------------
+// ---------------- ShabdaRupa (Declensions) ----------------
 function showDecl(q) {
-  const data = db.decl[q];
+  const data = db.shabdaRupa[q];
   document.getElementById("panelDecl").style.display = "block";
 
   if (!data) {
@@ -69,18 +63,25 @@ function showDecl(q) {
     return;
   }
 
-  let html = "<table class='declTable'><tr><th>विभक्ति</th><th>रूप</th></tr>";
-  Object.keys(data).forEach(vibhakti => {
-    html += `<tr><td>${vibhakti}</td><td>${data[vibhakti].join(", ")}</td></tr>`;
-  });
-  html += "</table>";
+  let html = `<h3>${q} (${data.gender === "m" ? "पुंलिङ्ग" : data.gender === "f" ? "स्त्रीलिङ्ग" : "नपुंसकलिङ्ग"})</h3>`;
+  html += "<table class='declTable'><tr><th>वचन</th><th>विभक्ति</th><th>रूप</th></tr>";
 
+  const vacanas = ["singular", "dual", "plural"];
+  const vibhaktis = ["prathama","dvitiya","tritiya","chaturthi","panchami","shashthi","saptami","sambodhana"];
+
+  vacanas.forEach(v => {
+    vibhaktis.forEach(vib => {
+      html += `<tr><td>${v}</td><td>${vib}</td><td>${data.forms[v][vib]}</td></tr>`;
+    });
+  });
+
+  html += "</table>";
   document.getElementById("declContent").innerHTML = html;
 }
 
-// ---------------- Conjugations ----------------
+// ---------------- DhatuRupa (Conjugations) ----------------
 function showConj(q) {
-  const data = db.conj[q];
+  const data = db.dhatuRupa[q];
   document.getElementById("panelConj").style.display = "block";
 
   if (!data) {
@@ -88,29 +89,29 @@ function showConj(q) {
     return;
   }
 
-  // Order fix → प्रथमा → मध्यम → उत्तम
-  const order = ["प्रथमा", "मध्यम", "उत्तम"];
-  let html = "<table class='conjTable'><tr><th>पुरुष</th><th>रूप</th></tr>";
+  let html = `<h3>${q} (${data.meaning})</h3>`;
 
-  order.forEach(purush => {
-    if (data[purush]) {
-      data[purush].forEach((rup, i) => {
-        html += `<tr><td>${purush} (${i + 1})</td><td>${rup}</td></tr>`;
+  // सभी लकार दिखाना
+  for (let lakar in data.lakar) {
+    html += `<h4>${lakar.toUpperCase()} लकार</h4>`;
+    html += "<table class='conjTable'><tr><th>वचन</th><th>पुरुष</th><th>रूप</th></tr>";
+
+    const vacanas = ["singular","dual","plural"];
+    const purushOrder = ["prathama","madhyama","uttama"]; // ✅ सही क्रम
+
+    vacanas.forEach(v => {
+      purushOrder.forEach(purush => {
+        if (data.lakar[lakar][v][purush]) {
+          html += `<tr><td>${v}</td><td>${purush}</td><td>${data.lakar[lakar][v][purush]}</td></tr>`;
+        }
       });
-    }
-  });
+    });
 
-  html += "</table>";
+    html += "</table>";
+  }
+
   document.getElementById("conjContent").innerHTML = html;
-}
-
-// ---------------- Translator ----------------
-function showTranslate(q) {
-  const data = db.trans[q];
-  document.getElementById("panelTrans").style.display = "block";
-
-  if (!data) {
-    document.getElementById("transContent").innerHTML = "❌ अनुवाद नहीं मिला";
+}    document.getElementById("transContent").innerHTML = "❌ अनुवाद नहीं मिला";
     return;
   }
 
