@@ -1,0 +1,75 @@
+{
+  "shabdaRupa": {
+    "राम": {
+      "gender": "m",
+      "forms": {
+        "singular": { "prathama": "रामः", "dvitiya": "रामम्", "tritiya": "रामेण", "chaturthi": "रामाय", "panchami": "रामात्", "shashthi": "रामस्य", "saptami": "रामे", "sambodhana": "हे राम" },
+        "dual": { "prathama": "रामौ", "dvitiya": "रामौ", "tritiya": "रामाभ्याम्", "chaturthi": "रामाभ्याम्", "panchami": "रामाभ्याम्", "shashthi": "रामयोः", "saptami": "रामयोः", "sambodhana": "हे रामौ" },
+        "plural": { "prathama": "रामाः", "dvitiya": "रामान्", "tritiya": "रामैः", "chaturthi": "रामेभ्यः", "panchami": "रामेभ्यः", "shashthi": "रामाणाम्", "saptami": "रामेषु", "sambodhana": "हे रामाः" }
+      }
+    },
+    "गज": {
+      "gender": "m",
+      "forms": {
+        "singular": { "prathama": "गजः", "dvitiya": "गजम्", "tritiya": "गजेन", "chaturthi": "गजाय", "panchami": "गजात्", "shashthi": "गजस्य", "saptami": "गजे", "sambodhana": "हे गज" },
+        "dual": { "prathama": "गजौ", "dvitiya": "गजौ", "tritiya": "गजाभ्याम्", "chaturthi": "गजाभ्याम्", "panchami": "गजाभ्याम्", "shashthi": "गजयोः", "saptami": "गजयोः", "sambodhana": "हे गजौ" },
+        "plural": { "prathama": "गजाः", "dvitiya": "गजान्", "tritiya": "गजैः", "chaturthi": "गजेभ्यः", "panchami": "गजेभ्यः", "shashthi": "गजानाम्", "saptami": "गजेषु", "sambodhana": "हे गजाः" }
+      }
+    },
+    "सीता": {
+      "gender": "f",
+      "forms": {
+        "singular": { "prathama": "सीता", "dvitiya": "सीताम्", "tritiya": "सीतया", "chaturthi": "सीतायै", "panchami": "सीतायाः", "shashthi": "सीतायाः", "saptami": "सीतायाम्", "sambodhana": "हे सीते" },
+        "dual": { "prathama": "सीते", "dvitiya": "सीते", "tritiya": "सीताभ्याम्", "chaturthi": "सीताभ्याम्", "panchami": "सीताभ्याम्", "shashthi": "सीतयोः", "saptami": "सीतयोः", "sambodhana": "हे सीते" },
+        "plural": { "prathama": "सीताः", "dvitiya": "सीताः", "tritiya": "सीताभिः", "chaturthi": "सीताभ्यः", "panchami": "सीताभ्यः", "shashthi": "सीतानाम्", "saptami": "सीतासु", "sambodhana": "हे सीताः" }
+      }
+    }
+  },
+
+  "dhatuRupa": {
+    "गम्": {
+      "meaning": "to go",
+      "lakar": {
+        "lat": {
+          "singular": { "uttama": "गच्छामि", "madhyama": "गच्छसि", "prathama": "गच्छति" },
+          "dual": { "uttama": "गच्छावः", "madhyama": "गच्छथः", "prathama": "गच्छतः" },
+          "plural": { "uttama": "गच्छामः", "madhyama": "गच्छथ", "prathama": "गच्छन्ति" }
+        },
+        "lot": {
+          "singular": { "uttama": "गच्छानि", "madhyama": "गच्छ", "prathama": "गच्छतु" },
+          "dual": { "uttama": "गच्छाव", "madhyama": "गच्छतम्", "prathama": "गच्छताम्" },
+          "plural": { "uttama": "गच्छाम", "madhyama": "गच्छत", "prathama": "गच्छन्तु" }
+        }
+      }
+    },
+    "पठ्": {
+      "meaning": "to read",
+      "lakar": {
+        "lat": {
+          "singular": { "uttama": "पठामि", "madhyama": "पठसि", "prathama": "पठति" },
+          "dual": { "uttama": "पठावः", "madhyama": "पठथः", "prathama": "पठतः" },
+          "plural": { "uttama": "पठामः", "madhyama": "पठथ", "prathama": "पठन्ति" }
+        }
+      }
+    },
+    "लिख्": {
+      "meaning": "to write",
+      "lakar": {
+        "lat": {
+          "singular": { "uttama": "लिखामि", "madhyama": "लिखसि", "prathama": "लिखति" },
+          "dual": { "uttama": "लिखावः", "madhyama": "लिखथः", "prathama": "लिखतः" },
+          "plural": { "uttama": "लिखामः", "madhyama": "लिखथ", "prathama": "लिखन्ति" }
+        }
+      }
+    }
+  },
+
+  "dictionary": {
+    "राम": "Lord Rama, hero of Ramayana",
+    "गज": "Elephant",
+    "सीता": "Goddess Sita, wife of Rama",
+    "गम्": "to go",
+    "पठ्": "to read",
+    "लिख्": "to write"
+  }
+}
