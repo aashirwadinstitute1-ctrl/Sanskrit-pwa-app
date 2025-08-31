@@ -22,7 +22,7 @@
         <div class="tag">शब्दरूप • धातुरूप • शब्दकोश</div>
       </div>
     </div>
-    <div class="install-hint" id="installHint">Menu → Add to Home screen</div>
+    <div class="install-hint" id="installHint" style="display:none;">Menu → Add to Home screen</div>
   </header>
 
   <main class="container">
@@ -43,6 +43,7 @@
       <div id="results" class="results"></div>
     </section>
 
+    <!-- Panels -->
     <section class="card panel" id="panelDict" style="display:none">
       <h2>शब्दकोश</h2>
       <div id="dictContent"></div>
@@ -69,7 +70,7 @@
         <li>100+ शब्दरूप व 100+ धातुरूप (JSON से लोड)</li>
         <li>ऑफलाइन सपोर्ट (Service Worker)</li>
         <li>PWA — Add to Home Screen</li>
-        <li>उच्चारण (browser TTS)</li>
+        <li>उच्चारण (Browser TTS)</li>
       </ul>
     </section>
   </main>
@@ -80,9 +81,12 @@
 
   <script src="app.js"></script>
   <script>
+    // ✅ Service Worker Registration
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js').catch(()=>{console.warn('SW failed')});
     }
+
+    // ✅ Install Prompt
     let deferredPrompt;
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
@@ -97,4 +101,4 @@
     });
   </script>
 </body>
-  </html>
+</html>
