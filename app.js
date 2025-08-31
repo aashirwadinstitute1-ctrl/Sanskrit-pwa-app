@@ -1,73 +1,72 @@
-let db = {};
-let currentTool = "dict";
-
-// JSON database लोड करना
-fetch("sanskrit_database_full.json")
-  .then(r => r.json())
-  .then(j => {
-    db = j;
-    console.log("DB loaded", db);
-  });
-
-// Tool select
-document.getElementById("toolSelect").addEventListener("change", e => {
-  currentTool = e.target.value;
-});
-
-// Clear button
-document.getElementById("clearBtn").addEventListener("click", () => {
-  document.getElementById("query").value = "";
-  document.getElementById("results").innerHTML = "";
-  hideAllPanels();
-});
-
-// Search button
-document.getElementById("searchBtn").addEventListener("click", () => {
-  let q = document.getElementById("query").value.trim();
-  if (!q) return;
-  searchQuery(q);
-});
-
-// सभी panels hide करने का function
-function hideAllPanels() {
-  document.querySelectorAll(".panel").forEach(p => (p.style.display = "none"));
+// Utility: Show only one panel at a time
+function showPanel(id) {
+  document.querySelectorAll(".panel").forEach(p => p.style.display = "none");
+  if (id) document.getElementById(id).style.display = "block";
 }
 
-// Search logic
-function searchQuery(q) {
-  hideAllPanels();
+async function searchWord() {
+  const q = document.getElementById("query").value.trim();
+  const tool = document.getElementById("toolSelect").value;
+  const resBox = document.getElementById("results");
 
-  if (currentTool === "dict") {
-    showDict(q);
-  } else if (currentTool === "decl") {
-    showDecl(q);
-  } else if (currentTool === "conj") {
-    showConj(q);
-  } else if (currentTool === "translate") {
-    showTranslate(q);
+  if (!q) {
+    resBox.innerHTML = "<p>कृपया कोई शब्द लिखें।</p>";
+    return;
+  }
+
+  resBox.innerHTML = "⏳ खोज रहा है...";
+
+  let url = "";
+  if (tool === "dict") { url = "data/dictionary.json"; }
+  if (tool === "decl") { url = "data/shabdarupa.json"; }
+  if (tool === "conj") { url = "data/dhaturupa.json"; }
+
+  try {
+    if (tool === "translate") {
+      // Stub translation (later can connect API)
+      showPanel("panelTrans");
+      document.getElementById("transContent").innerHTML = `<p><b>${q}</b> → (अनुवाद coming soon)</p>`;
+      resBox.innerHTML = "";
+      return;
+    }
+
+    const r = await fetch(url);
+    const data = await r.json();
+
+    if (data[q]) {
+      const out = `<h3>${q}</h3><pre>${data[q].join("\n")}</pre>
+        <button onclick="speakText('${q}')">🔊 उच्चारण</button>`;
+      resBox.innerHTML = out;
+
+      if (tool === "dict") { showPanel("panelDict"); document.getElementById("dictContent").innerHTML = out; }
+      if (tool === "decl") { showPanel("panelDecl"); document.getElementById("declContent").innerHTML = out; }
+      if (tool === "conj") { showPanel("panelConj"); document.getElementById("conjContent").innerHTML = out; }
+    } else {
+      resBox.innerHTML = "❌ परिणाम नहीं मिला।";
+      showPanel();
+    }
+  } catch (err) {
+    resBox.innerHTML = "⚠ डेटा लोड करने में समस्या हुई।";
+    showPanel();
   }
 }
 
-function showDict(q) {
-  let res = db.dictionary?.[q];
-  document.getElementById("panelDict").style.display = "block";
-  document.getElementById("dictContent").innerText = res || "❌ शब्द नहीं मिला";
+function clearSearch() {
+  document.getElementById("query").value = "";
+  document.getElementById("results").innerHTML = "";
+  showPanel();
 }
 
-function showDecl(q) {
-  let res = db.declensions?.[q];
-  document.getElementById("panelDecl").style.display = "block";
-  document.getElementById("declContent").innerText = res || "❌ शब्दरूप नहीं मिला";
+function speakText(txt) {
+  if (!window.speechSynthesis) return;
+  const msg = new SpeechSynthesisUtterance(txt);
+  msg.lang = "sa-IN"; // Sanskrit/Indic voice (browser dependent)
+  window.speechSynthesis.speak(msg);
 }
 
-function showConj(q) {
-  let res = db.conjugations?.[q];
-  document.getElementById("panelConj").style.display = "block";
-  document.getElementById("conjContent").innerText = res || "❌ धातुरूप नहीं मिला";
-}
-
-function showTranslate(q) {
-  let res = db.translations?.[q];
-  document.getElementById("panelTrans").style.display = "block";
-  document.getElementById("transContent").innerText = res || "❌ अनुवाद नहीं मिला";
-}
+// Event Listeners
+document.getElementById("searchBtn").addEventListener("click", searchWord);
+document.getElementById("clearBtn").addEventListener("click", clearSearch);
+document.getElementById("query").addEventListener("keypress", e => {
+  if (e.key === "Enter") searchWord();
+});
