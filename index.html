@@ -77,11 +77,15 @@
   <footer class="footer">
     Made with ❤️ — EduSpark PWA
   </footer>
-  <script src="app.js">
+
+  <!-- पहला script: आपका app.js -->
+  <script src="app.js"></script>
+
+  <!-- दूसरा script: service worker + install -->
+  <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js').catch(()=>{console.warn('SW failed')});
     }
-    // Install prompt handling (show simple hint)
     let deferredPrompt;
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
