@@ -1,8 +1,4 @@
-/* app.js
-   Core logic: loads database JSON, search, and renders dictionary / declensions / conjugations / translator.
-   Expects `sanskrit_database_full.json` in same folder (large JSON auto-generated).
-*/
-
+/* app.js (corrected) */
 const DB_FILE = 'sanskrit_database_full.json'; // keep this file in repo root
 let DB = null;
 
@@ -30,12 +26,19 @@ function showPanel(name){
   if(name==='translate') panelTrans.style.display = 'block';
 }
 
+// event bindings
 toolSelect.addEventListener('change', ()=> showPanel(toolSelect.value));
 clearBtn.addEventListener('click', ()=>{ queryEl.value=''; resultsEl.innerHTML=''; dictContent.innerHTML=''; declContent.innerHTML=''; conjContent.innerHTML=''; transContent.innerHTML=''; });
-
-searchBtn.addEventListener('click', ()=> doSearch(queryEl.value.trim()));
-
-queryEl.addEventListener('keydown', (e)=> { if(e.key==='Enter') doSearch(queryEl.value.trim()); });
+searchBtn.addEventListener('click', ()=> {
+  const t = queryEl.value.trim();
+  if(toolSelect.value === 'translate'){
+    transContent.innerHTML = translateText(t);
+    showPanel('translate');
+  } else {
+    doSearch(t);
+  }
+});
+queryEl.addEventListener('keydown', (e)=> { if(e.key==='Enter') searchBtn.click(); });
 
 async function loadDB(){
   resultsEl.innerHTML = 'Loading database…';
@@ -48,31 +51,34 @@ async function loadDB(){
     console.error(err);
   }
 }
+
 function doSearch(q){
   resultsEl.innerHTML = '';
   if(!q) { resultsEl.innerHTML = '<div style="color:#e11d48">कृपया शब्द टाइप करें।</div>'; return; }
   if(!DB){ resultsEl.innerHTML = '<div style="color:#e11d48">Database not loaded yet.</div>'; return; }
 
-  // exact key match (Sanskrit) first
+  // exact Sanskrit match
   if(DB.dictionary && DB.dictionary[q]){
     renderDictionary(q, DB.dictionary[q]);
     return;
   }
-  // if user typed english or hindi, try to find in meanings
+
+  // search in meanings (english/hindi) or substring matches
   const hits = [];
   for(const key of Object.keys(DB.dictionary)){
     const entry = DB.dictionary[key];
     const en = (entry.meaning && entry.meaning.en) ? entry.meaning.en.toLowerCase() : '';
     const hi = (entry.meaning && entry.meaning.hi) ? entry.meaning.hi.toLowerCase() : '';
     if(en.includes(q.toLowerCase()) || hi.includes(q.toLowerCase()) || key.includes(q)) hits.push(key);
-    if(hits.length>50) break;
+    if(hits.length>100) break;
   }
+
   if(hits.length===0){
     resultsEl.innerHTML = `<div style="color:#f59e0b">कोई परिणाम नहीं मिला: "${q}"</div>`;
     return;
   }
-  resultsEl.innerHTML = `<div><b>प्रतिक्रियाएँ (${hits.length}) —</b></div>` + hits.slice(0,50).map(k=>`<div class="hit" style="padding:6px 0;border-bottom:1px dashed #eef6ff;cursor:pointer" data-key="${k}">${k} — ${(DB.dictionary[k].meaning||{}).en||''} ${(DB.dictionary[k].meaning||{}).hi? ' / '+DB.dictionary[k].meaning.hi: ''}</div>`).join('');
-  // attach click
+
+  resultsEl.innerHTML = `<div><b>प्रतिक्रियाएँ (${hits.length}) —</b></div>` + hits.slice(0,80).map(k=>`<div class="hit" style="padding:6px 0;border-bottom:1px dashed #eef6ff;cursor:pointer" data-key="${k}">${k} — ${(DB.dictionary[k].meaning||{}).en||''} ${(DB.dictionary[k].meaning||{}).hi? ' / '+DB.dictionary[k].meaning.hi: ''}</div>`).join('');
   document.querySelectorAll('.hit').forEach(el=>{
     el.addEventListener('click', ()=> {
       const k = el.getAttribute('data-key');
@@ -86,13 +92,8 @@ function renderDictionary(key, entry){
   let html = `<h3>${key}</h3>`;
   html += `<div><b>POS:</b> ${entry.pos||''} ${entry.gender? (' • लिङ्: '+entry.gender): ''}</div>`;
   if(entry.meaning) html += `<div><b>अर्थ:</b> ${(entry.meaning.hi||'')} — <span style="font-family:monospace">${entry.meaning.en||''}</span></div>`;
-  // if declensions available
-  if(DB.shabdaRupa && DB.shabdaRupa[key]){
-    html += `<div style="margin-top:8px"><button onclick="renderDecl('${key}')">शब्दरूप दिखायें</button></div>`;
-  }
-  if(DB.dhatuRupa && DB.dhatuRupa[key]){
-    html += `<div style="margin-top:8px"><button onclick="renderConj('${key}')">धातुरूप दिखायें</button></div>`;
-  }
+  if(DB.shabdaRupa && DB.shabdaRupa[key]) html += `<div style="margin-top:8px"><button onclick="renderDecl('${key}')">शब्दरूप दिखायें</button></div>`;
+  if(DB.dhatuRupa && DB.dhatuRupa[key]) html += `<div style="margin-top:8px"><button onclick="renderConj('${key}')">धातुरूप दिखायें</button></div>`;
   html += `<div style="margin-top:12px"><button onclick="speakText('${key}')">🔊 श्रोतु</button></div>`;
   dictContent.innerHTML = html;
 }
@@ -101,7 +102,7 @@ function renderDecl(key){
   showPanel('decl');
   const rec = DB.shabdaRupa[key];
   if(!rec){ declContent.innerHTML = 'कोई शब्दरूप उपलब्ध नहीं।'; return; }
-  const vibs = ['prathama','dvitiya','tritiya','caturthi','panchami','shashthi','saptami','sambodhana'];
+  const vibs = ['prathama','dvitiya','tritiya','chaturthi','panchami','shashthi','saptami','sambodhana'];
   const names = ['प्रथमा','द्वितीया','तृतीया','चतुर्थी','पञ्चमी','षष्ठी','सप्तमी','सम्बोधन'];
   let html = `<h3>${key} — (${rec.gender||''})</h3><table><thead><tr><th>विभक्ति</th><th>एकवचन</th><th>द्विवचन</th><th>बहुवचन</th></tr></thead><tbody>`;
   for(let i=0;i<vibs.length;i++){
@@ -111,6 +112,44 @@ function renderDecl(key){
   html += '</tbody></table>';
   declContent.innerHTML = html;
 }
+
+function renderConj(key){
+  showPanel('conj');
+  const rec = DB.dhatuRupa[key];
+  if(!rec){ conjContent.innerHTML = 'कोई धातुरूप उपलब्ध नहीं।'; return; }
+  let html = `<h3>${key} — ${(rec.meaning||'')}</h3>`;
+  // IMPORTANT: person order must be uttama (1st), madhyama (2nd), prathama (3rd)
+  const personKeys = ['uttama','madhyama','prathama'];
+  const personLabels = {'uttama':'उत्तमः','madhyama':'मध्यमः','prathama':'प्रथमः'};
+  for(const lakar of Object.keys(rec.lakar || {})){
+    const forms = rec.lakar[lakar];
+    html += `<h4>${lakar}</h4><table><thead><tr><th>पुरुष</th><th>एकवचन</th><th>द्विवचन</th><th>बहुवचन</th></tr></thead><tbody>`;
+    for(const pk of personKeys){
+      html += `<tr><th>${personLabels[pk]||pk}</th><td>${(forms.singular && forms.singular[pk])||''}</td><td>${(forms.dual && forms.dual[pk])||''}</td><td>${(forms.plural && forms.plural[pk])||''}</td></tr>`;
+    }
+    html += `</tbody></table>`;
+  }
+  conjContent.innerHTML = html;
+}
+
+function translateText(txt){
+  if(!DB) return 'DB not loaded';
+  const parts = txt.trim().split(/\s+/);
+  const out = parts.map(p=>{
+    if(DB.dictionary[p] && DB.dictionary[p].meaning) return `${p} → ${DB.dictionary[p].meaning.hi||''} / ${DB.dictionary[p].meaning.en||''}`;
+    return `${p} → (no entry)`;
+  });
+  return out.join('<br>');
+}
+function speakText(text){
+  if(!('speechSynthesis' in window)) return alert('Speech not supported');
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'sa-IN';
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(u);
+}
+
+loadDB();}
 
 function renderConj(key){
   showPanel('conj');
