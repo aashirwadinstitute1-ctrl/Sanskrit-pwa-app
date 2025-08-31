@@ -77,9 +77,7 @@
   <footer class="footer">
     Made with ❤️ — EduSpark PWA
   </footer>
-
-  <script src="app.js"></script>
-  <script>
+  <script src="app.js">
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js').catch(()=>{console.warn('SW failed')});
     }
