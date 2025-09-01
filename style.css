@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="sa">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>संस्कृत शिक्षण — EduSpark</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <link rel="icon" href="icons/icon-192.png" sizes="192x192">
+    <link rel="apple-touch-icon" href="icons/icon-512.png">
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="brand">
+        <div class="logo">अ</div>
+        <div>
+          <h1>संस्कृत शिक्षण</h1>
+          <div class="tag">शब्दरूप • धातुरूप • शब्दकोश</div>
+        </div>
+      </div>
+      <div id="installHint" class="install-hint">Menu → Add to Home screen</div>
+    </header>
+
+    <main class="container">
+      <section class="card search-card">
+        <div class="row">
+          <input id="query" placeholder="उदाहरण: राम, गम्, पुस्तक..." />
+          <button id="searchBtn">खोजें</button>
+        </div>
+        <div class="row small-controls">
+          <select id="toolSelect">
+            <option value="dict">शब्दकोश</option>
+            <option value="decl">शब्दरूप</option>
+            <option value="conj">धातुरूप</option>
+            <option value="translate">अनुवाद</option>
+          </select>
+          <button id="clearBtn">साफ़ करें</button>
+        </div>
+        <div id="results" class="results"></div>
+      </section>
+
+      <section class="card panel" id="panelDict" style="display:none">
+        <h2>शब्दकोश</h2>
+        <div id="dictContent"></div>
+      </section>
+
+      <section class="card panel" id="panelDecl" style="display:none">
+        <h2>शब्दरूप</h2>
+        <div id="declContent"></div>
+      </section>
+
+      <section class="card panel" id="panelConj" style="display:none">
+        <h2>धातुरूप</h2>
+        <div id="conjContent"></div>
+      </section>
+
+      <section class="card panel" id="panelTrans" style="display:none">
+        <h2>अनुवाद</h2>
+        <div id="transContent"></div>
+      </section>
+
+      <section class="card about">
+        <h3>सुविधाएँ</h3>
+        <ul>
+          <li>ऑफ़लाइन सपोर्ट (Service Worker)</li>
+          <li>manual JSON data से लोड</li>
+          <li>PWA — Add to home screen</li>
+          <li>उच्चारण (Browser TTS)</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="footer">Made with ❤️ — EduSpark PWA</footer>
+
+    <script src="app.js"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('service-worker.js').catch(() => console.warn('SW registration failed'));
+      }
+      let deferredPrompt;
+      window.addEventListener('beforeinstallprompt', e => {
+        e.preventDefault();
+        deferredPrompt = e;
+        document.getElementById('installHint').style.display = 'block';
+      });
+      document.getElementById('installHint').addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        deferredPrompt = null;
+        document.getElementById('installHint').style.display = 'none';
+      });
+    </script>
+  </body>
+</html>
